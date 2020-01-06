@@ -37,7 +37,6 @@ const Create: React.SFC<CreatePops> = props => {
     form.validateFieldsAndScroll((err, value) => {
       if (!err) {
         handleFormSubmit({
-          ...info,
           ...value,
           pId: value.pId === 'root' ? undefined : value.pId
         });
