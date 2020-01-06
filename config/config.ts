@@ -33,11 +33,11 @@ const plugins: IPlugin[] = [
       },
       pwa: pwa
         ? {
-            workboxPluginMode: 'InjectManifest',
-            workboxOptions: {
-              importWorkboxFrom: 'local',
-            },
-          }
+          workboxPluginMode: 'InjectManifest',
+          workboxOptions: {
+            importWorkboxFrom: 'local',
+          },
+        }
         : false, // default close dll, because issue https://github.com/ant-design/ant-design-pro/issues/4665
       // dll features https://webpack.js.org/plugins/dll-plugin/
       // dll: {
@@ -112,6 +112,40 @@ export default {
               icon: 'crown',
               component: './Admin',
               authority: ['admin'],
+            },
+            {
+              name: 'permit',
+              icon: 'smile',
+              routes: [
+                {
+                  path: '/permit',
+                  redirect: '/permit/role',
+                },
+                {
+                  name: 'method',
+                  icon: 'smile',
+                  path: '/permit/method',
+                  component: './permit/method',
+                },
+                {
+                  name: 'rest',
+                  icon: 'smile',
+                  path: '/permit/rest',
+                  component: './permit/rest',
+                },
+                {
+                  name: 'menu',
+                  icon: 'smile',
+                  path: '/permit/menu',
+                  component: './permit/menu',
+                },
+                {
+                  name: 'role',
+                  icon: 'smile',
+                  path: '/permit/role',
+                  component: './permit/role',
+                },
+              ],
             },
             {
               component: './404',
