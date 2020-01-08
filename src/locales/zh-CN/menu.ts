@@ -11,6 +11,7 @@ export default {
   'menu.exception.500': '500',
   'menu.permit': '权限',
   'menu.permit.method': '动作',
+  'menu.permit.service': '服务',
   'menu.permit.rest': '资源',
   'menu.permit.menu': '菜单',
   'menu.permit.role': '角色',

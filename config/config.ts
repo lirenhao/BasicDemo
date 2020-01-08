@@ -128,6 +128,12 @@ export default {
                   component: './permit/method',
                 },
                 {
+                  name: 'service',
+                  icon: 'smile',
+                  path: '/permit/service',
+                  component: './permit/service',
+                },
+                {
                   name: 'rest',
                   icon: 'smile',
                   path: '/permit/rest',

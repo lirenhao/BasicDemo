@@ -1,10 +1,5 @@
 [
   {
-    "id": "ALL",
-    "name": "HTTP ALL",
-    "remark": "http的所有方法"
-  },
-  {
     "id": "GET",
     "name": "HTTP GET",
     "remark": "http的get方法"
@@ -23,10 +18,5 @@
     "id": "DELETE",
     "name": "HTTP DELETE",
     "remark": "http的delete方法"
-  },
-  {
-    "id": "NONE",
-    "name": "HTTP NONE",
-    "remark": "http不能被访问"
   }
 ]
