@@ -5,8 +5,8 @@ import { FormattedMessage, formatMessage } from 'umi-plugin-react/locale';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Dispatch } from 'redux';
 import { FormComponentProps } from 'antd/es/form';
-import { SorterResult } from 'antd/es/table';
-import { MethodListData, MethodData, Pagination, QueryData } from './data';
+import { PaginationConfig, SorterResult, TableCurrentDataSource } from 'antd/es/table';
+import { MethodListData, MethodData, QueryData } from './data';
 import { ModelState } from './model';
 import Create from './Create';
 
@@ -40,11 +40,10 @@ const Method: React.FC<MethodProps> = props => {
     });
   };
 
-  const handleTable = (
-    pagination: Partial<Pagination>,
-    filters: Record<keyof MethodData, string[]>,
-    sorter: SorterResult<MethodData>,
-  ) => {
+  const handleTable = (pagination: PaginationConfig,
+    _filters: Partial<Record<keyof MethodData, string[]>>,
+    _sorter: SorterResult<MethodData>,
+    _extra: TableCurrentDataSource<MethodData>) => {
     props.dispatch({
       type: 'method/find',
       payload: {

@@ -31,9 +31,9 @@ export async function getMenu() {
 }
 
 export async function getRest() {
-  return request('/api/rest');
+  return request('/api/rest?pageSize=100');
 }
 
 export async function getMethod() {
-  return request('/api/method');
+  return request('/api/method?pageSize=100');
 }

@@ -5,8 +5,8 @@ import { FormattedMessage, formatMessage } from 'umi-plugin-react/locale';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Dispatch } from 'redux';
 import { FormComponentProps } from 'antd/es/form';
-import { SorterResult } from 'antd/es/table';
-import { RoleListData, RoleData, Pagination, QueryData, RoleMenuData, RoleRestData } from './data';
+import { PaginationConfig, SorterResult, TableCurrentDataSource } from 'antd/es/table';
+import { RoleListData, RoleData, QueryData, RoleMenuData, RoleRestData } from './data';
 import { ModelState } from './model';
 import Create from './Create';
 import Menu from './Menu';
@@ -45,8 +45,10 @@ const Role: React.FC<RoleProps> = props => {
     });
   };
 
-  const handleTable = (pagination: Partial<Pagination>,
-    filters: Record<keyof RoleData, string[]>, sorter: SorterResult<RoleData>) => {
+  const handleTable = (pagination: PaginationConfig,
+    _filters: Partial<Record<keyof RoleData, string[]>>,
+    _sorter: SorterResult<RoleData>,
+    _extra: TableCurrentDataSource<RoleData>) => {
     props.dispatch({
       type: 'role/find',
       payload: {

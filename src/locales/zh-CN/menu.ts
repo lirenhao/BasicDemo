@@ -15,4 +15,5 @@ export default {
   'menu.permit.rest': '资源',
   'menu.permit.menu': '菜单',
   'menu.permit.role': '角色',
+  'menu.permit.app': '应用',
 };
