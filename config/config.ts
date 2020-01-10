@@ -112,6 +112,12 @@ export default {
               authority: ['admin'],
             },
             {
+              name: '服务',
+              icon: 'smile',
+              path: '/svc',
+              component: './svc',
+            },
+            {
               name: 'permit',
               icon: 'smile',
               routes: [
