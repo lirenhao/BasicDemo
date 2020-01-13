@@ -124,52 +124,6 @@ export default {
               component: './app',
             },
             {
-              name: 'permit',
-              icon: 'smile',
-              routes: [
-                {
-                  path: '/permit',
-                  redirect: '/permit/role',
-                },
-                {
-                  name: 'method',
-                  icon: 'smile',
-                  path: '/permit/method',
-                  component: './permit/method',
-                },
-                {
-                  name: 'rest',
-                  icon: 'smile',
-                  path: '/permit/rest',
-                  component: './permit/rest',
-                },
-                {
-                  name: 'menu',
-                  icon: 'smile',
-                  path: '/permit/menu',
-                  component: './permit/menu',
-                },
-                {
-                  name: 'role',
-                  icon: 'smile',
-                  path: '/permit/role',
-                  component: './permit/role',
-                },
-                {
-                  name: 'service',
-                  icon: 'smile',
-                  path: '/permit/service',
-                  component: './permit/service',
-                },
-                {
-                  name: 'app',
-                  icon: 'smile',
-                  path: '/permit/app',
-                  component: './permit/app',
-                },
-              ],
-            },
-            {
               component: './404',
             },
           ],
