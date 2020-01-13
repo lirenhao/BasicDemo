@@ -1,12 +1,13 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
-import { getAllIds, getInfo, getRoleIds, getRoleInfo, getSvcIds, getSvcInfo } from './service';
-import { AppTreeData } from './data';
+import { getAllIds, getInfo, getSvcIds, getSvcInfo } from './service';
+import { AppData, SvcData } from './data';
 
 export interface ModelState {
   ids: string[];
-  tree: AppTreeData[];
+  apps: AppData[];
   svcIds: string[];
+  svcs: SvcData[];
 }
 
 export interface ModelType {
@@ -15,22 +16,22 @@ export interface ModelType {
   effects: {
     fetchIds: Effect;
     fetchInfo: Effect;
-    fetchRoleIds: Effect;
-    fetchRoleInfo: Effect;
     fetchSvcIds: Effect;
     fetchSvcInfo: Effect;
   };
   reducers: {
     setIds: Reducer<ModelState>;
-    setRoleIds: Reducer<ModelState>;
+    setApps: Reducer<ModelState>;
     setSvcIds: Reducer<ModelState>;
+    setSvcs: Reducer<ModelState>;
   };
 }
 
 const defaulState: ModelState = {
   ids: [],
-  tree: [],
+  apps: [],
   svcIds: [],
+  svcs: [],
 }
 
 const Model: ModelType = {
@@ -43,26 +44,15 @@ const Model: ModelType = {
         type: 'setIds',
         payload: ids,
       });
-      if (callback) callback();
+      if (callback) callback(ids);
     },
-    *fetchInfo({ callback, payload }, { call }) {
+    *fetchInfo({ callback, payload }, { call, put }) {
       const info = yield call(getInfo, payload);
-      if (callback) callback(info);
-    },
-    *fetchRoleIds({ payload, callback }, { call, put }) {
-      const roleIds = yield call(getRoleIds, payload);
       yield put({
-        type: 'setRoleIds',
-        payload: {
-          id: payload,
-          roleIds,
-        },
+        type: 'setApps',
+        payload: info,
       });
-      if (callback) callback();
-    },
-    *fetchRoleInfo({ callback, payload }, { call }) {
-      const roleInfo = yield call(getRoleInfo, payload.appId, payload.roleId);
-      if (callback) callback(roleInfo);
+      if (callback) callback(info);
     },
     *fetchSvcIds({ callback }, { call, put }) {
       const svcIds = yield call(getSvcIds);
@@ -70,10 +60,14 @@ const Model: ModelType = {
         type: 'setSvcIds',
         payload: svcIds,
       });
-      if (callback) callback();
+      if (callback) callback(svcIds);
     },
-    *fetchSvcInfo({ callback, payload }, { call }) {
+    *fetchSvcInfo({ callback, payload }, { call, put }) {
       const svcInfo = yield call(getSvcInfo, payload);
+      yield put({
+        type: 'setSvcs',
+        payload: svcInfo,
+      });
       if (callback) callback(svcInfo);
     },
   },
@@ -82,14 +76,12 @@ const Model: ModelType = {
       return {
         ...state,
         ids: payload,
-        tree: payload.map((id: string) => ({ id, roleIds: [] })),
       };
     },
-    setRoleIds(state = defaulState, { payload }) {
-      const { id, roleIds } = payload;
+    setApps(state = defaulState, { payload }) {
       return {
         ...state,
-        tree: state.tree.map(item => item.id === id ? ({ ...item, roleIds }) : item),
+        apps: [...state.apps, payload],
       };
     },
     setSvcIds(state = defaulState, { payload }) {
@@ -97,7 +89,13 @@ const Model: ModelType = {
         ...state,
         svcIds: payload,
       }
-    }
+    },
+    setSvcs(state = defaulState, { payload }) {
+      return {
+        ...state,
+        svcs: [...state.svcs, payload],
+      };
+    },
   }
 }
 

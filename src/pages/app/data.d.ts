@@ -1,4 +1,4 @@
-export type Operator = ("READ" | "CREATE" | "UPDATE" | "DELETE")
+export type Operator = ("READ" | "CREATE" | "UPDATE" | "DELETE");
 
 export interface ResData {
   uri: string;
@@ -10,23 +10,15 @@ export interface SvcData {
   resources: ResData[];
 }
 
-export interface ResWithSvcData {
-  svcId: string;
-  res: ResData;
-}
+export type SvcResData = SvcData;
 
 export interface RoleData {
-  appId: string;
-  id: string;
-  resources: ResWithSvcData[];
+  name: string;
+  resources: SvcResData[];
 }
 
 export interface AppData {
   id: string;
-  resources: ResWithSvcData[];
-}
-
-export interface AppTreeData {
-  id: string;
-  roleIds: string[];
+  resources: SvcResData[];
+  roles: RoleData[];
 }

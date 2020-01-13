@@ -4,7 +4,7 @@ import { PageHeaderWrapper, GridContent } from '@ant-design/pro-layout';
 import { Spin, Button, Icon, Tree, Modal, Card, Empty } from 'antd';
 import { AntTreeNode } from 'antd/es/tree'
 import { connect } from 'dva';
-import { AppTreeData } from './data.d';
+import { AppData } from './data.d';
 import { ModelState } from './model';
 import TreeMenu from './TreeMeun';
 import AppRes from './AppRes';
@@ -16,7 +16,8 @@ const { TreeNode } = Tree;
 
 interface AppProps {
   dispatch: Dispatch<any>;
-  tree: AppTreeData[];
+  ids: string[];
+  apps: AppData[];
   loading: boolean;
 }
 
@@ -30,11 +31,14 @@ const AppView: React.FC<AppProps> = props => {
   }, []);
 
   const onLoadRole = (node: AntTreeNode) => {
+    const appId = node.props.appId;
     return new Promise<void>(resolve => {
       props.dispatch({
-        type: 'app/fetchRoleIds',
-        payload: node.props.appId,
-        callback: () => resolve()
+        type: 'app/fetchInfo',
+        payload: appId,
+        callback: () => {
+          resolve();
+        },
       })
     });
   }
@@ -69,7 +73,7 @@ const AppView: React.FC<AppProps> = props => {
 
   }
 
-  const { tree, loading } = props;
+  const { ids, apps, loading } = props;
   return (
     <PageHeaderWrapper>
       <Spin spinning={loading}>
@@ -84,17 +88,17 @@ const AppView: React.FC<AppProps> = props => {
                 onSelect={onTreeSelect}
                 selectedKeys={selectedKeys}
               >
-                {tree.map(node => (
+                {ids.map(appId => (
                   <TreeNode
-                    appId={node.id}
-                    key={node.id}
-                    title={<TreeMenu appId={node.id} />}
-                    children={node.roleIds.map(roleId => (
+                    appId={appId}
+                    key={appId}
+                    title={<TreeMenu appId={appId} />}
+                    children={apps.filter(app => app.id === appId)[0]?.roles?.map(role => (
                       <TreeNode isLeaf
-                        appId={node.id}
-                        roleId={roleId}
-                        key={`${node.id}#${roleId}`}
-                        title={<TreeMenu appId={node.id} roleId={roleId} />} />
+                        appId={appId}
+                        roleId={role.name}
+                        key={`${appId}#${role.name}`}
+                        title={<TreeMenu appId={appId} roleId={role.name} />} />
                     ))}
                   />
                 ))}
@@ -125,7 +129,8 @@ export default connect(
     app: ModelState,
     loading: { models: { [key: string]: boolean } };
   }) => ({
-    tree: app.tree,
+    ids: app.ids,
+    apps: app.apps,
     loading: loading.models.app,
   }),
 )(AppView);

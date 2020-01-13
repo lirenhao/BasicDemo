@@ -2,9 +2,9 @@ import React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'dva';
 import { Card, Collapse } from 'antd';
-import { ResWithSvcData } from './data';
+import { SvcResData } from './data';
 import { ModelState } from './model';
-import { AppData, RoleData } from './data';
+import { AppData } from './data';
 import ResOps from './ResOps';
 
 const { Panel } = Collapse;
@@ -14,55 +14,45 @@ interface RoleResProps {
   svcIds: string[];
   appId: string;
   roleId: string;
+  apps: AppData[];
   loading: boolean;
 }
 
 const RoleRes: React.FC<RoleResProps> = props => {
 
-  const [appRes, setAppRes] = React.useState<ResWithSvcData[]>([]);
-  const [roleRes, setRoleRes] = React.useState<ResWithSvcData[]>([]);
+  const { dispatch, svcIds, appId, roleId, apps } = props;
+
+  const [appRes, setAppRes] = React.useState<SvcResData[]>([]);
+  const [roleRes, setRoleRes] = React.useState<SvcResData[]>([]);
 
   React.useEffect(() => {
-    props.dispatch({ type: 'app/fetchSvcIds' });
+    dispatch({ type: 'app/fetchSvcIds' });
   }, []);
 
   React.useEffect(() => {
-    props.dispatch({
+    dispatch({
       type: 'app/fetchInfo',
-      payload: props.appId,
+      payload: appId,
       callback: (info: AppData) => {
         setAppRes(info.resources);
       },
     });
-  }, [props.appId]);
+  }, [appId]);
 
   React.useEffect(() => {
-    props.dispatch({
-      type: 'app/fetchRoleInfo',
-      payload: {
-        appId: props.appId,
-        roleId: props.roleId,
-      },
-      callback: (info: RoleData) => {
-        setRoleRes(info.resources);
-      },
-    });
-  }, [props.appId, props.roleId]);
-
-  const handlChange = (svcId: string | string[]) => {
-    console.log(svcId)
-  }
-
-  const { svcIds, appId, roleId } = props;
+    setRoleRes([
+      ...apps.filter(app => app.id === appId)[0]?.roles?.filter(role => role.name === roleId)[0]?.resources,
+    ]);
+  }, [appId, roleId]);
 
   return (
     <Card title={`资源管理【${appId}】->【${roleId}】`} extra={<a href="#">保存</a>}>
-      <Collapse onChange={handlChange}>
-        {svcIds.filter(svcId => appRes.map(res => res.svcId).includes(svcId))
+      <Collapse>
+        {svcIds.filter(svcId => appRes.map(svcRes => svcRes.id).includes(svcId))
           .map(svcId => (
             <Panel header={svcId} key={svcId}>
-              {appRes.filter(resWithSvc => resWithSvc.svcId === svcId).map(resWithSvc => (
-                <ResOps svcId={resWithSvc.svcId} uri={resWithSvc.res.uri} ops={resWithSvc.res.ops} value={roleRes} onChange={setRoleRes} />
+              {appRes.filter(svcRes => svcRes.id === svcId)[0]?.resources?.map(res => (
+                <ResOps svcId={svcId} uri={res.uri} ops={res.ops} value={roleRes} onChange={setRoleRes} />
               ))}
             </Panel>
           ))}
@@ -81,6 +71,7 @@ export default connect(
     loading: { models: { [key: string]: boolean } };
   }) => ({
     svcIds: app.svcIds,
+    apps: app.apps,
     loading: loading.models.app,
   }),
 )(RoleRes);
