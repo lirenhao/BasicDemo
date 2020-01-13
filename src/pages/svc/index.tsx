@@ -2,7 +2,7 @@ import React from 'react';
 import { Dispatch } from 'redux';
 import { GridContent } from '@ant-design/pro-layout';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { Spin, Menu, List } from 'antd';
+import { Spin, Menu, Card, List } from 'antd';
 import { connect } from 'dva';
 import { SvcData, ResData } from './data.d';
 import { ModelState } from './model';
@@ -53,17 +53,20 @@ const SvcView: React.FC<SvcProps> = props => {
               </Menu>
             </div>
             <div className={styles.right}>
-              <div className={styles.title}>{id}</div>
-              <List
-                loading={loading}
-                itemLayout="horizontal"
-                dataSource={info.resources}
-                renderItem={(item: ResData) => (
-                  <List.Item>
-                    <List.Item.Meta title={item.uri} description={item.ops.join(' | ')} />
-                  </List.Item>
-                )}
-              />
+              <div className={styles.title}>
+                <Card title={id}>
+                  <List
+                    loading={loading}
+                    itemLayout="horizontal"
+                    dataSource={info.resources}
+                    renderItem={(item: ResData) => (
+                      <List.Item>
+                        <List.Item.Meta title={item.uri} description={item.ops.join(' | ')} />
+                      </List.Item>
+                    )}
+                  />
+                </Card>
+              </div>
             </div>
           </div>
         </GridContent>

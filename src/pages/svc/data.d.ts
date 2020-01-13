@@ -1,13 +1,6 @@
-export enum Operator {
-  READ = "READ",
-  CREATE = "CREATE",
-  UPDATE = "UPDATE",
-  DELETE = "DELETE",
-}
-
 export interface ResData {
   uri: String;
-  ops: Operator[];
+  ops: ("READ" | "CREATE" | "UPDATE" | "DELETE")[];
 }
 
 export interface SvcData {

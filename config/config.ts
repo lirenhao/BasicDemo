@@ -118,6 +118,12 @@ export default {
               component: './svc',
             },
             {
+              name: '应用',
+              icon: 'smile',
+              path: '/app',
+              component: './app',
+            },
+            {
               name: 'permit',
               icon: 'smile',
               routes: [
