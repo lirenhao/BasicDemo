@@ -1,45 +1,43 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
-import { getAllIds, getInfo } from './service';
+import { getSvcs } from './service';
+import { SvcData } from './data';
 
 export interface ModelState {
-  ids: string[];
+  svcs: SvcData[];
 }
 
 export interface ModelType {
   namespace: string;
   state: ModelState;
   effects: {
-    fetchIds: Effect;
-    fetchInfo: Effect;
+    fetchSvcs: Effect;
   };
   reducers: {
-    setIds: Reducer<ModelState>;
+    setSvcs: Reducer<ModelState>;
   };
+}
+
+const defaulState: ModelState = {
+  svcs: [],
 }
 
 const Model: ModelType = {
   namespace: 'svc',
-  state: {
-    ids: [],
-  },
+  state: defaulState,
   effects: {
-    *fetchIds(_, { call, put }) {
-      const ids = yield call(getAllIds);
+    *fetchSvcs(_, { call, put }) {
+      const svcs = yield call(getSvcs);
       yield put({
-        type: 'setIds',
-        payload: ids,
+        type: 'setSvcs',
+        payload: svcs,
       });
-    },
-    *fetchInfo({ payload, callback }, { call }) {
-      const info = yield call(getInfo, payload);
-      if (callback) callback(info);
     },
   },
   reducers: {
-    setIds(_, action) {
+    setSvcs(_, action) {
       return {
-        ids: action.payload,
+        svcs: action.payload,
       };
     },
   }

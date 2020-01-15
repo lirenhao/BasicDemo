@@ -73,11 +73,7 @@ const data: SvcData[] = [
 ]
 
 export default {
-  'GET /api/permit/svc': (req: Request, resp: Response) => {
-    resp.send(data.map(item => item.id));
+  'GET /api/permit/svc': (_: Request, resp: Response) => {
+    resp.send(data);
   },
-  'GET /api/permit/svc/:id': (req: Request, resp: Response) => {
-    const { id } = req.params;
-    resp.send(data.filter(item => item.id === decodeURIComponent(id))[0]);
-  }
 }

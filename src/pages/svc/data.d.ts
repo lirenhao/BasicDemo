@@ -1,9 +1,9 @@
 export interface ResData {
-  uri: String;
+  uri: string;
   ops: ("READ" | "CREATE" | "UPDATE" | "DELETE")[];
 }
 
 export interface SvcData {
-  id: String;
+  id: string;
   resources: ResData[];
 }

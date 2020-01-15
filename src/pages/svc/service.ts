@@ -1,9 +1,5 @@
 import request from '@/utils/request';
 
-export async function getAllIds() {
+export async function getSvcs() {
   return request('/api/permit/svc');
-}
-
-export async function getInfo(id: string) {
-  return request(`/api/permit/svc/${encodeURIComponent(id)}`);
 }

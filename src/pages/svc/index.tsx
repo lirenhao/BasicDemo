@@ -13,30 +13,24 @@ const { Item } = Menu;
 
 interface SvcProps {
   dispatch: Dispatch<any>;
-  ids: string[];
-  info: SvcData;
+  svcs: SvcData[];
   loading: boolean;
 }
 
 const SvcView: React.FC<SvcProps> = props => {
+  const { dispatch, svcs, loading } = props;
 
   const [id, setId] = React.useState<string>("");
   const [info, setInfo] = React.useState<Partial<SvcData>>({});
 
   React.useEffect(() => {
-    props.dispatch({ type: 'svc/fetchIds' });
+    dispatch({ type: 'svc/fetchSvcs' });
   }, []);
 
   const selectKey = (key: string) => {
     setId(key);
-    props.dispatch({
-      type: 'svc/fetchInfo',
-      payload: key,
-      callback: (info: SvcData) => setInfo(info),
-    });
+    setInfo(svcs.filter(svc => svc.id === key)[0]);
   }
-
-  const { ids, loading } = props;
 
   return (
     <PageHeaderWrapper>
@@ -49,7 +43,7 @@ const SvcView: React.FC<SvcProps> = props => {
                 selectedKeys={[id]}
                 onClick={({ key }) => selectKey(key)}
               >
-                {ids.map(id => <Item key={id}>{id}</Item>)}
+                {svcs.map(svc => <Item key={svc.id}>{svc.id}</Item>)}
               </Menu>
             </div>
             <div className={styles.right}>
@@ -76,13 +70,14 @@ const SvcView: React.FC<SvcProps> = props => {
 }
 
 export default connect(
-  ({ svc,
+  ({
+    svc,
     loading,
   }: {
     svc: ModelState,
     loading: { models: { [key: string]: boolean } };
   }) => ({
-    ids: svc.ids,
+    svcs: svc.svcs,
     loading: loading.models.svc,
   }),
 )(SvcView);
