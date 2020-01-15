@@ -124,6 +124,12 @@ export default {
               component: './app',
             },
             {
+              name: '机构',
+              icon: 'smile',
+              path: '/org',
+              component: './org',
+            },
+            {
               component: './404',
             },
           ],
