@@ -11,31 +11,24 @@ const { Panel } = Collapse;
 
 interface AppResProps {
   dispatch: Dispatch<any>;
-  svcIds: string[];
+  app: AppData;
   svcs: SvcData[];
-  appId: string;
   loading: boolean;
 }
 
 const AppRes: React.FC<AppResProps> = props => {
 
-  const { dispatch, appId, svcIds, svcs } = props;
+  const { dispatch, app, svcs } = props;
 
   const [appRes, setAppRes] = React.useState<SvcResData[]>([]);
 
   React.useEffect(() => {
-    dispatch({ type: 'app/fetchSvcIds' });
+    dispatch({ type: 'app/fetchSvcs' });
   }, []);
 
   React.useEffect(() => {
-    dispatch({
-      type: 'app/fetchInfo',
-      payload: appId,
-      callback: (app: AppData) => {
-        setAppRes(app.resources);
-      },
-    });
-  }, [appId]);
+    setAppRes(app.resources);
+  }, [app]);
 
   const handlChange = (key: string | string[]) => {
     if (typeof key === 'string') {
@@ -55,12 +48,12 @@ const AppRes: React.FC<AppResProps> = props => {
   }
 
   return (
-    <Card title={`资源管理【${appId}】`} extra={<a href="#">保存</a>}>
+    <Card title={`资源管理【${app.id}】`} extra={<a href="#">保存</a>}>
       <Collapse onChange={handlChange}>
-        {svcIds.map(svcId => (
-          <Panel header={svcId} key={svcId}>
-            {svcs.filter(svc => svc.id === svcId)[0]?.resources?.map(res => (
-              <ResOps svcId={svcId} uri={res.uri} ops={res.ops} value={appRes} onChange={setAppRes} />
+        {svcs.map(svc => (
+          <Panel header={svc.id} key={svc.id}>
+            {svc.resources?.map(res => (
+              <ResOps key={app.id} svcId={svc.id} uri={res.uri} ops={res.ops} value={appRes} onChange={setAppRes} />
             ))}
           </Panel>
         ))}
@@ -68,7 +61,6 @@ const AppRes: React.FC<AppResProps> = props => {
     </Card>
   )
 }
-
 
 export default connect(
   ({
@@ -78,7 +70,6 @@ export default connect(
     app: ModelState,
     loading: { models: { [key: string]: boolean } };
   }) => ({
-    svcIds: app.svcIds,
     svcs: app.svcs,
     loading: loading.models.app,
   }),

@@ -133,10 +133,6 @@ const appData: AppData[] = [
 
 export default {
   'GET /api/permit/app': (_: Request, resp: Response) => {
-    resp.send(appData.map(item => item.id));
-  },
-  'GET /api/permit/app/:id': (req: Request, resp: Response) => {
-    const { id } = req.params;
-    resp.send(appData.filter(item => item.id === decodeURIComponent(id))[0]);
+    resp.send(appData);
   },
 }

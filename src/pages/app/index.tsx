@@ -2,7 +2,6 @@ import React from 'react';
 import { Dispatch } from 'redux';
 import { PageHeaderWrapper, GridContent } from '@ant-design/pro-layout';
 import { Spin, Button, Icon, Tree, Modal, Card, Empty } from 'antd';
-import { AntTreeNode } from 'antd/es/tree'
 import { connect } from 'dva';
 import { AppData } from './data.d';
 import { ModelState } from './model';
@@ -16,32 +15,19 @@ const { TreeNode } = Tree;
 
 interface AppProps {
   dispatch: Dispatch<any>;
-  ids: string[];
   apps: AppData[];
   loading: boolean;
 }
 
 const AppView: React.FC<AppProps> = props => {
+  const { dispatch, apps, loading } = props;
 
   const [selectedKeys, setSelectedKeys] = React.useState<string[]>([]);
   const [isCreateApp, setIsCreateApp] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    props.dispatch({ type: 'app/fetchIds' });
+    dispatch({ type: 'app/fetchApps' });
   }, []);
-
-  const onLoadRole = (node: AntTreeNode) => {
-    const appId = node.props.appId;
-    return new Promise<void>(resolve => {
-      props.dispatch({
-        type: 'app/fetchInfo',
-        payload: appId,
-        callback: () => {
-          resolve();
-        },
-      })
-    });
-  }
 
   const onTreeSelect = (selectedKeys: string[]) => {
     setSelectedKeys(selectedKeys)
@@ -56,11 +42,11 @@ const AppView: React.FC<AppProps> = props => {
       const [appId, roleId] = selectedKeys[0].split('#');
       if (!roleId) {
         return (
-          <AppRes appId={appId} />
+          <AppRes app={apps.filter(app => app.id === appId)[0]} />
         )
       } else {
         return (
-          <RoleRes appId={appId} roleId={roleId} />
+          <RoleRes app={apps.filter(app => app.id === appId)[0]} roleId={roleId} />
         )
       }
     } else {
@@ -70,10 +56,8 @@ const AppView: React.FC<AppProps> = props => {
         </Card>
       )
     }
-
   }
 
-  const { ids, apps, loading } = props;
   return (
     <PageHeaderWrapper>
       <Spin spinning={loading}>
@@ -84,21 +68,20 @@ const AppView: React.FC<AppProps> = props => {
                 <Icon type="plus" />
               </Button>
               <Tree
-                loadData={onLoadRole}
                 onSelect={onTreeSelect}
                 selectedKeys={selectedKeys}
               >
-                {ids.map(appId => (
+                {apps.map(app => (
                   <TreeNode
-                    appId={appId}
-                    key={appId}
-                    title={<TreeMenu appId={appId} />}
-                    children={apps.filter(app => app.id === appId)[0]?.roles?.map(role => (
+                    appId={app.id}
+                    key={app.id}
+                    title={<TreeMenu appId={app.id} />}
+                    children={app.roles?.map(role => (
                       <TreeNode isLeaf
-                        appId={appId}
+                        appId={app.id}
                         roleId={role.name}
-                        key={`${appId}#${role.name}`}
-                        title={<TreeMenu appId={appId} roleId={role.name} />} />
+                        key={`${app.id}#${role.name}`}
+                        title={<TreeMenu appId={app.id} roleId={role.name} />} />
                     ))}
                   />
                 ))}
@@ -129,7 +112,6 @@ export default connect(
     app: ModelState,
     loading: { models: { [key: string]: boolean } };
   }) => ({
-    ids: app.ids,
     apps: app.apps,
     loading: loading.models.app,
   }),
