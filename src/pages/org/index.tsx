@@ -1,7 +1,7 @@
 import React from 'react';
 import { Dispatch } from 'redux';
 import { PageHeaderWrapper, GridContent } from '@ant-design/pro-layout';
-import { Spin, Tree, Modal, Card, Empty } from 'antd';
+import { Spin, Tree, Empty } from 'antd';
 import { connect } from 'dva';
 import { OrgTreeData } from './data.d';
 import { ModelState } from './model';
@@ -20,7 +20,6 @@ const OrgView: React.FC<OrgProps> = props => {
   const { orgTree, loading } = props;
 
   const [selectedKeys, setSelectedKeys] = React.useState<string[]>([]);
-  const [isCreateApp, setIsCreateApp] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     props.dispatch({ type: 'org/fetchOrgTree' });
@@ -28,10 +27,6 @@ const OrgView: React.FC<OrgProps> = props => {
 
   const onTreeSelect = (selectedKeys: string[]) => {
     setSelectedKeys(selectedKeys)
-  }
-
-  const handleCreateApp = (id: string) => {
-
   }
 
   const loopTreeNode = (data: OrgTreeData[]) => data.map((item) => {
@@ -76,13 +71,6 @@ const OrgView: React.FC<OrgProps> = props => {
           </div>
         </GridContent>
       </Spin>
-      <Modal
-        title="添加机构"
-        visible={isCreateApp}
-        onOk={() => handleCreateApp('')}
-        onCancel={() => setIsCreateApp(false)}>
-        TODO 创建应用
-      </Modal>
     </PageHeaderWrapper>
   )
 }

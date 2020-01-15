@@ -1,30 +1,39 @@
 import React from 'react';
 import { Dispatch } from 'redux';
-import { Button, Dropdown, Menu, Modal } from 'antd';
+import { Dropdown, Menu } from 'antd';
 import { connect } from 'dva';
-import { OrgTreeData } from './data';
+import { OrgTreeData, OrgData, UserData } from './data';
+import { ModelState } from './model';
+import OrgForm from './OrgForm';
+import UserForm from './UserForm';
 
 interface TreeMenuProps {
   dispatch: Dispatch<any>;
+  orgTree: OrgTreeData[];
   node: OrgTreeData;
 }
 
 const TreeMenu: React.FC<TreeMenuProps> = props => {
-  const { node } = props;
+  const { dispatch, orgTree, node } = props;
 
-  const [isCreate, setIsCreate] = React.useState<boolean>(false);
-  const [isUpdate, setIsUpdate] = React.useState<boolean>(false);
+  const [isCreateOrg, setIsCreateOrg] = React.useState<boolean>(false);
+  const [isUpdateOrg, setIsUpdateOrg] = React.useState<boolean>(false);
+  const [isCreateUser, setIsCreateUser] = React.useState<boolean>(false);
 
-  const handleCreate = (orgId: string) => {
+  const handleCreateOrg = (org: OrgData) => {
+    console.log(org)
+  }
+
+  const handleUpdateOrg = (org: OrgData) => {
+    console.log(org)
+  }
+
+  const handleRemoveOrg = (orgId: string) => {
 
   }
 
-  const handleUpdate = (orgId: string) => {
-
-  }
-
-  const handleRemove = (orgId: string) => {
-
+  const handleCreateUser = (user: UserData) => {
+    console.log(user)
   }
 
   return (
@@ -32,7 +41,7 @@ const TreeMenu: React.FC<TreeMenuProps> = props => {
       <Menu>
         <Menu.Item onClick={(e) => {
           e.domEvent.stopPropagation();
-          setIsUpdate(true);
+          setIsUpdateOrg(true);
         }}>
           修改机构
         </Menu.Item>
@@ -40,31 +49,50 @@ const TreeMenu: React.FC<TreeMenuProps> = props => {
           node.children?.length === 0 ? (
             <Menu.Item onClick={(e) => {
               e.domEvent.stopPropagation();
-              handleRemove(node.org.id);
+              handleRemoveOrg(node.org.id);
             }}>
               删除机构
             </Menu.Item>
-          ) : ""
+          ) : ''
         }
         <Menu.Item onClick={(e) => {
           e.domEvent.stopPropagation();
-          setIsCreate(true);
+          setIsCreateOrg(true);
         }}>
-          添加子机构
+          添加机构
+        </Menu.Item>
+        <Menu.Item onClick={(e) => {
+          e.domEvent.stopPropagation();
+          setIsCreateUser(true);
+        }}>
+          添加用户
         </Menu.Item>
       </Menu>
     )} >
-      <span>{node.org.name}</span>
+      <span>
+        {node.org.name}
+        <div onClick={(e) => e.stopPropagation()}>
+          <OrgForm title="修改机构" visible={isUpdateOrg} onCancel={() => setIsUpdateOrg(false)}
+            info={node.org} onSubmit={handleUpdateOrg} />
+          <OrgForm title="添加机构" visible={isCreateOrg} onCancel={() => setIsCreateOrg(false)}
+            info={node.org} onSubmit={handleCreateOrg} />
+          <UserForm title="添加用户" visible={isCreateUser} onCancel={() => setIsCreateUser(false)}
+            orgTree={orgTree} info={{ orgId: node.org.id }} onSubmit={handleCreateUser} />
+        </div>
+      </span>
     </Dropdown>
   );
 }
 
 export default connect(
   ({
+    org,
     loading,
   }: {
+    org: ModelState,
     loading: { models: { [key: string]: boolean } };
   }) => ({
+    orgTree: org.orgTree,
     loading: loading.models.org,
   }),
 )(TreeMenu);

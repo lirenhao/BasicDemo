@@ -11,3 +11,11 @@ export async function getUserByOrgId(orgId: string) {
 export async function getApps() {
   return request('/api/permit/app');
 }
+
+export async function existOrgId(orgId: string) {
+  return request(`/api/permit/org/${encodeURIComponent(orgId)}/exist`);
+}
+
+export async function existUserId(userId: string) {
+  return request(`/api/permit/user/${encodeURIComponent(userId)}/exist`);
+}

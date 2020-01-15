@@ -74,8 +74,16 @@ export default {
   'GET /api/permit/org': (_: Request, resp: Response) => {
     resp.send(makeTree("", orgData));
   },
+  'GET /api/permit/org/:id/exist': (req: Request, resp: Response) => {
+    const { id } = req.params;
+    resp.send(orgData.filter(org => org.id === decodeURIComponent(id)).length > 0);
+  },
   'GET /api/permit/user': (req: Request, resp: Response) => {
     const { orgId } = req.query;
     resp.send(userData.filter(item => item.orgId === decodeURIComponent(orgId)));
+  },
+  'GET /api/permit/user/:id/exist': (req: Request, resp: Response) => {
+    const { id } = req.params;
+    resp.send(userData.filter(user => user.id === decodeURIComponent(id)).length > 0);
   },
 }
