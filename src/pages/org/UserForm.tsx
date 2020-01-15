@@ -44,6 +44,7 @@ const OrgForm: React.SFC<OrgFormProps> = props => {
       if (!err) {
         onSubmit(values);
         form.resetFields();
+        onCancel();
       }
     });
   }

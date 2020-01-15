@@ -21,19 +21,31 @@ const TreeMenu: React.FC<TreeMenuProps> = props => {
   const [isCreateUser, setIsCreateUser] = React.useState<boolean>(false);
 
   const handleCreateOrg = (org: OrgData) => {
-    console.log(org)
+    dispatch({
+      type: 'org/fetchCreateOrUpdateOrg',
+      payload: org,
+    });
   }
 
   const handleUpdateOrg = (org: OrgData) => {
-    console.log(org)
+    dispatch({
+      type: 'org/fetchCreateOrUpdateOrg',
+      payload: org,
+    });
   }
 
   const handleRemoveOrg = (orgId: string) => {
-
+    dispatch({
+      type: 'org/fetchDeleteOrg',
+      payload: orgId,
+    });
   }
 
   const handleCreateUser = (user: UserData) => {
-    console.log(user)
+    dispatch({
+      type: 'org/fetchCreateOrUpdateUser',
+      payload: user,
+    });
   }
 
   return (

@@ -1,6 +1,6 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
-import { getOrgTree, getUserByOrgId, getApps } from './service';
+import { getOrgTree, getUserByOrgId, getApps, createAndUpdataOrg, deleteOrg, createAndUpdataUser, deleteUser } from './service';
 import { OrgTreeData, UserData, AppData } from './data';
 
 export interface ModelState {
@@ -16,6 +16,10 @@ export interface ModelType {
     fetchOrgTree: Effect;
     fetchUserByOrgId: Effect;
     fetchApps: Effect;
+    fetchCreateOrUpdateOrg: Effect;
+    fetchDeleteOrg: Effect;
+    fetchCreateOrUpdateUser: Effect;
+    fetchDeleteUser: Effect;
   };
   reducers: {
     setOrgTree: Reducer<ModelState>;
@@ -54,6 +58,37 @@ const Model: ModelType = {
       const apps = yield call(getApps);
       yield put({ type: 'setApps', payload: apps || [] });
       if (callback) callback(apps || []);
+    },
+    *fetchCreateOrUpdateOrg({ callback, payload }, { call, put }) {
+      yield call(createAndUpdataOrg, payload)
+      yield put({
+        type: 'fetchOrgTree'
+      })
+      if (callback) callback();
+    },
+    *fetchDeleteOrg({ callback, payload }, { call, put }) {
+      yield call(deleteOrg, payload)
+      yield put({
+        type: 'fetchOrgTree'
+      })
+      if (callback) callback();
+    },
+    *fetchCreateOrUpdateUser({ callback, payload }, { call, put }) {
+      yield call(createAndUpdataUser, payload)
+      yield put({
+        type: 'fetchUserByOrgId',
+        payload: payload.orgId,
+      })
+      if (callback) callback();
+    },
+    *fetchDeleteUser({ callback, payload }, { call, put }) {
+      const { id, orgId } = payload;
+      yield call(deleteUser, id)
+      yield put({
+        type: 'fetchUserByOrgId',
+        payload: orgId,
+      })
+      if (callback) callback();
     },
   },
   reducers: {

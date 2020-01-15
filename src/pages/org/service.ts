@@ -1,4 +1,5 @@
 import request from '@/utils/request';
+import { OrgData, UserData } from './data';
 
 export async function getOrgTree() {
   return request('/api/permit/org');
@@ -18,4 +19,30 @@ export async function existOrgId(orgId: string) {
 
 export async function existUserId(userId: string) {
   return request(`/api/permit/user/${encodeURIComponent(userId)}/exist`);
+}
+
+export async function createAndUpdataOrg(org: OrgData) {
+  return request('/api/permit/org', {
+    method: 'PUT',
+    data: org,
+  });
+}
+
+export async function deleteOrg(orgId: string) {
+  return request(`/api/permit/org/${encodeURIComponent(orgId)}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function createAndUpdataUser(user: UserData) {
+  return request('/api/permit/user', {
+    method: 'PUT',
+    data: user,
+  });
+}
+
+export async function deleteUser(userId: string) {
+  return request(`/api/permit/user/${encodeURIComponent(userId)}`, {
+    method: 'DELETE',
+  });
 }

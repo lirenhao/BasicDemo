@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dispatch } from 'redux';
-import { Button, Icon, Menu, Card } from 'antd';
+import { Card } from 'antd';
 import { connect } from 'dva';
 import { AppData, RoleIdData, UserData } from './data';
 import { ModelState } from './model';
@@ -14,7 +14,7 @@ interface UserRoleProps {
 }
 
 const UserRole: React.FC<UserRoleProps> = props => {
-  const { dispatch, user, apps, loading } = props;
+  const { dispatch, user, apps } = props;
 
   const [roles, setRoles] = React.useState<RoleIdData[]>([]);
 
@@ -26,9 +26,19 @@ const UserRole: React.FC<UserRoleProps> = props => {
     setRoles(user.roles);
   }, [user]);
 
+  const handleSubmit = () => {
+    dispatch({
+      type: 'org/fetchCreateOrUpdateUser',
+      payload: {
+        ...user,
+        roles,
+      },
+    });
+  }
+
   return (
     < Card title={`角色管理【${user.orgId}】->【${user.id}】`}
-      extra={< a href="#" > 保存</a>}>
+      extra={< a href="#" onClick={handleSubmit} >保存</a>}>
       {apps.map(app => (<RoleOps app={app} value={roles} onChange={setRoles} />))}
     </Card >);
 }
