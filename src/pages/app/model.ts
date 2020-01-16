@@ -1,6 +1,6 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
-import { getApps, getSvcs } from './service';
+import { getApps, getSvcs, createAndUpdataApp, deleteApp } from './service';
 import { AppData, SvcData } from './data';
 
 export interface ModelState {
@@ -14,6 +14,8 @@ export interface ModelType {
   effects: {
     fetchApps: Effect;
     fetchSvcs: Effect;
+    fetchCreateOrUpdateApp: Effect;
+    fetchDeleteApp: Effect;
   };
   reducers: {
     setApps: Reducer<ModelState>;
@@ -45,6 +47,20 @@ const Model: ModelType = {
         payload: svcs,
       });
       if (callback) callback(svcs);
+    },
+    *fetchCreateOrUpdateApp({ callback, payload }, { call, put }) {
+      yield call(createAndUpdataApp, payload)
+      yield put({
+        type: 'fetchApps'
+      })
+      if (callback) callback();
+    },
+    *fetchDeleteApp({ callback, payload }, { call, put }) {
+      yield call(deleteApp, payload)
+      yield put({
+        type: 'fetchApps'
+      })
+      if (callback) callback();
     },
   },
   reducers: {

@@ -135,4 +135,8 @@ export default {
   'GET /api/permit/app': (_: Request, resp: Response) => {
     resp.send(appData);
   },
+  'GET /api/permit/app/:id/exist': (req: Request, resp: Response) => {
+    const { id } = req.params;
+    resp.send(appData.filter(app => app.id === decodeURIComponent(id)).length > 0);
+  },
 }

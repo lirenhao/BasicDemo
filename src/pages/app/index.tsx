@@ -1,13 +1,14 @@
 import React from 'react';
 import { Dispatch } from 'redux';
 import { PageHeaderWrapper, GridContent } from '@ant-design/pro-layout';
-import { Spin, Button, Icon, Tree, Modal, Card, Empty } from 'antd';
+import { Spin, Button, Icon, Tree, Card, Empty } from 'antd';
 import { connect } from 'dva';
 import { AppData } from './data.d';
 import { ModelState } from './model';
 import TreeMenu from './TreeMeun';
 import AppRes from './AppRes';
 import RoleRes from './RoleRes';
+import AppForm from './AppForm';
 
 import styles from './style.less';
 
@@ -33,8 +34,11 @@ const AppView: React.FC<AppProps> = props => {
     setSelectedKeys(selectedKeys)
   }
 
-  const handleCreateApp = (id: string) => {
-
+  const handleCreateApp = (app: AppData) => {
+    dispatch({
+      type: 'app/fetchCreateOrUpdateApp',
+      payload: app,
+    });
   }
 
   const renderRes = () => {
@@ -75,13 +79,13 @@ const AppView: React.FC<AppProps> = props => {
                   <TreeNode
                     appId={app.id}
                     key={app.id}
-                    title={<TreeMenu appId={app.id} />}
+                    title={<TreeMenu app={app} />}
                     children={app.roles?.map(role => (
                       <TreeNode isLeaf
                         appId={app.id}
                         roleId={role.name}
                         key={`${app.id}#${role.name}`}
-                        title={<TreeMenu appId={app.id} roleId={role.name} />} />
+                        title={<TreeMenu app={app} role={role} />} />
                     ))}
                   />
                 ))}
@@ -93,13 +97,8 @@ const AppView: React.FC<AppProps> = props => {
           </div>
         </GridContent>
       </Spin>
-      <Modal
-        title="添加应用"
-        visible={isCreateApp}
-        onOk={() => handleCreateApp('')}
-        onCancel={() => setIsCreateApp(false)}>
-        TODO 创建应用
-      </Modal>
+      <AppForm title="添加应用" visible={isCreateApp} onCancel={() => setIsCreateApp(false)}
+        info={{}} onSubmit={handleCreateApp} />
     </PageHeaderWrapper>
   )
 }
