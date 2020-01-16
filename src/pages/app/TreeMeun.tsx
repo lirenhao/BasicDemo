@@ -78,9 +78,9 @@ const TreeMenu: React.FC<TreeMenuProps> = props => {
           <AppForm title="修改应用" visible={isUpdateApp} onCancel={() => setIsUpdateApp(false)}
             info={app} onSubmit={handleUpdateApp} />
           <RoleForm title="添加角色" visible={isCreateRole} onCancel={() => setIsCreateRole(false)}
-            app={app} info={{}} onSubmit={handleUpdateApp} />
+            app={app} info={{ resources: [] }} onSubmit={handleUpdateApp} />
           <RoleForm title="修改角色" visible={isUpdateRole} onCancel={() => setIsUpdateRole(false)}
-            app={app} info={role || {}} onSubmit={handleUpdateApp} />
+            app={app} info={role || { resources: [] }} onSubmit={handleUpdateApp} />
         </div>
       </span>
     </Dropdown>

@@ -120,18 +120,10 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
   /**
    * constructor
    */
-  const [menu, setMenu] = React.useState<MenuDataItem[]>([]);
-
   useEffect(() => {
     if (dispatch) {
       dispatch({
         type: 'user/fetchCurrent',
-      });
-      dispatch({
-        type: 'user/fetchMenu',
-        callback: (menu: MenuDataItem[]) => {
-          setMenu(menu);
-        }
       });
     }
   }, []);

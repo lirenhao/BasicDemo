@@ -30,13 +30,14 @@ const ResOps: React.FC<ResOpsProps> = props => {
   }, [value]);
 
   const onCheckAllChange = (e: CheckboxChangeEvent) => {
+    const otherRes = value.filter(svcRes => svcRes.id === svcId)[0]?.resources?.filter(res => res.uri !== uri) || [];
     if (e.target.checked) {
       onChange([
         ...value.filter(svcRes => svcRes.id !== svcId),
         {
           id: svcId,
           resources: [
-            ...value.filter(svcRes => svcRes.id === svcId)[0]?.resources?.filter(res => res.uri !== uri),
+            ...otherRes,
             { uri, ops },
           ],
         },
@@ -47,7 +48,7 @@ const ResOps: React.FC<ResOpsProps> = props => {
         {
           id: svcId,
           resources: [
-            ...value.filter(svcRes => svcRes.id === svcId)[0]?.resources?.filter(res => res.uri !== uri),
+            ...otherRes,
           ],
         },
       ]);
@@ -55,13 +56,14 @@ const ResOps: React.FC<ResOpsProps> = props => {
   }
 
   const onCheckedChange = (checkedValue: CheckboxValueType[]) => {
+    const otherRes = value.filter(svcRes => svcRes.id === svcId)[0]?.resources?.filter(res => res.uri !== uri) || [];
     if (checkedValue.length > 0) {
       onChange([
         ...value.filter(svcRes => svcRes.id !== svcId),
         {
           id: svcId,
           resources: [
-            ...value.filter(svcRes => svcRes.id === svcId)[0]?.resources?.filter(res => res.uri !== uri),
+            ...otherRes,
             { uri, ops: checkedValue.map(item => item as Operator), },
           ],
         },
@@ -72,7 +74,7 @@ const ResOps: React.FC<ResOpsProps> = props => {
         {
           id: svcId,
           resources: [
-            ...value.filter(svcRes => svcRes.id === svcId)[0]?.resources?.filter(res => res.uri !== uri),
+            ...otherRes,
           ],
         },
       ]);

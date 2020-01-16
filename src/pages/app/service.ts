@@ -14,7 +14,7 @@ export async function existAppId(appId: string) {
 }
 
 export async function createAndUpdataApp(app: AppData) {
-  return request('/api/permit/org', {
+  return request('/api/permit/app', {
     method: 'PUT',
     data: app,
   });

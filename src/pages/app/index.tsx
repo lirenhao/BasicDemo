@@ -44,22 +44,19 @@ const AppView: React.FC<AppProps> = props => {
   const renderRes = () => {
     if (selectedKeys.length > 0) {
       const [appId, roleId] = selectedKeys[0].split('#');
-      if (!roleId) {
-        return (
-          <AppRes app={apps.filter(app => app.id === appId)[0]} />
-        )
-      } else {
-        return (
-          <RoleRes app={apps.filter(app => app.id === appId)[0]} roleId={roleId} />
-        )
+      if (apps.map(app => app.id).includes(appId)) {
+        if (!roleId) {
+          return (
+            <AppRes app={apps.filter(app => app.id === appId)[0]} />
+          )
+        } else {
+          return (
+            <RoleRes app={apps.filter(app => app.id === appId)[0]} roleId={roleId} />
+          )
+        }
       }
-    } else {
-      return (
-        <Card>
-          <Empty />
-        </Card>
-      )
     }
+    return (<Card><Empty /></Card>)
   }
 
   return (
@@ -98,7 +95,7 @@ const AppView: React.FC<AppProps> = props => {
         </GridContent>
       </Spin>
       <AppForm title="添加应用" visible={isCreateApp} onCancel={() => setIsCreateApp(false)}
-        info={{}} onSubmit={handleCreateApp} />
+        info={{ roles: [], resources: [] }} onSubmit={handleCreateApp} />
     </PageHeaderWrapper>
   )
 }

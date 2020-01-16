@@ -30,30 +30,23 @@ const AppRes: React.FC<AppResProps> = props => {
     setAppRes(app.resources);
   }, [app]);
 
-  const handlChange = (key: string | string[]) => {
-    if (typeof key === 'string') {
-      props.dispatch({
-        type: 'app/fetchSvcInfo',
-        payload: key,
-      });
-    } else {
-      const svcId = key.filter(svcId => !svcs.map(svc => svc.id).includes(svcId))[0];
-      if (svcId) {
-        props.dispatch({
-          type: 'app/fetchSvcInfo',
-          payload: svcId,
-        });
-      }
-    }
+  const handleSubmit = () => {
+    dispatch({
+      type: 'app/fetchCreateOrUpdateApp',
+      payload: {
+        ...app,
+        resources: appRes,
+      },
+    });
   }
 
   return (
-    <Card title={`资源管理【${app.id}】`} extra={<a href="#">保存</a>}>
-      <Collapse onChange={handlChange}>
+    <Card title={`资源管理【${app.id}】`} extra={<a href="#" onClick={handleSubmit}>保存</a>}>
+      <Collapse defaultActiveKey={svcs.map(svc => `${app.id}#${svc.id}`)}>
         {svcs.map(svc => (
-          <Panel header={svc.id} key={svc.id}>
+          <Panel header={svc.id} key={`${app.id}#${svc.id}`}>
             {svc.resources?.map(res => (
-              <ResOps key={app.id} svcId={svc.id} uri={res.uri} ops={res.ops} value={appRes} onChange={setAppRes} />
+              <ResOps key={`${app.id}#${svc.id}#${res.uri}`} svcId={svc.id} uri={res.uri} ops={res.ops} value={appRes} onChange={setAppRes} />
             ))}
           </Panel>
         ))}

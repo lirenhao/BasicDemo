@@ -30,12 +30,28 @@ const RoleRes: React.FC<RoleResProps> = props => {
     setRoleRes(app.roles.filter(role => role.name === roleId)[0].resources);
   }, [app, roleId]);
 
+  const handleSubmit = () => {
+    dispatch({
+      type: 'app/fetchCreateOrUpdateApp',
+      payload: {
+        ...app,
+        roles: [
+          ...app.roles.filter(role => role.name !== roleId),
+          {
+            name: roleId,
+            resources: roleRes,
+          },
+        ],
+      },
+    });
+  }
+
   return (
-    <Card title={`资源管理【${app.id}】->【${roleId}】`} extra={<a href="#">保存</a>}>
-      <Collapse>
+    <Card title={`资源管理【${app.id}】->【${roleId}】`} extra={<a href="#" onClick={handleSubmit}>保存</a>}>
+      <Collapse defaultActiveKey={svcs.map(svc => `${app.id}#${roleId}#${svc.id}`)}>
         {svcs.filter(svc => app.resources.map(svcRes => svcRes.id).includes(svc.id))
           .map(svc => (
-            <Panel header={svc.id} key={svc.id}>
+            <Panel header={svc.id} key={`${app.id}#${roleId}#${svc.id}`}>
               {app.resources.filter(svcRes => svcRes.id === svc.id)[0]?.resources?.map(res => (
                 <ResOps key={`${app.id}#${roleId}`} svcId={svc.id} uri={res.uri} ops={res.ops} value={roleRes} onChange={setRoleRes} />
               ))}
