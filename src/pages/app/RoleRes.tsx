@@ -48,12 +48,12 @@ const RoleRes: React.FC<RoleResProps> = props => {
 
   return (
     <Card title={`资源管理【${app.id}】->【${roleId}】`} extra={<a href="#" onClick={handleSubmit}>保存</a>}>
-      <Collapse defaultActiveKey={svcs.map(svc => `${app.id}#${roleId}#${svc.id}`)}>
+      <Collapse key={`${app.id}#${roleId}`} defaultActiveKey={svcs.map(svc => `${app.id}#${roleId}#${svc.id}`)}>
         {svcs.filter(svc => app.resources.map(svcRes => svcRes.id).includes(svc.id))
           .map(svc => (
             <Panel header={svc.id} key={`${app.id}#${roleId}#${svc.id}`}>
               {app.resources.filter(svcRes => svcRes.id === svc.id)[0]?.resources?.map(res => (
-                <ResOps key={`${app.id}#${roleId}`} svcId={svc.id} uri={res.uri} ops={res.ops} value={roleRes} onChange={setRoleRes} />
+                <ResOps key={`${app.id}#${roleId}#${svc.id}#${res.uri}`} svcId={svc.id} uri={res.uri} ops={res.ops} value={roleRes} onChange={setRoleRes} />
               ))}
             </Panel>
           ))}

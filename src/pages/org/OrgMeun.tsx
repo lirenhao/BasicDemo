@@ -57,16 +57,14 @@ const TreeMenu: React.FC<TreeMenuProps> = props => {
         }}>
           修改机构
         </Menu.Item>
-        {
-          node.children?.length === 0 ? (
-            <Menu.Item onClick={(e) => {
-              e.domEvent.stopPropagation();
-              handleRemoveOrg(node.org.id);
-            }}>
-              删除机构
-            </Menu.Item>
-          ) : ''
-        }
+        {(node.children && node.children.length > 0) ? '' : (
+          <Menu.Item onClick={(e) => {
+            e.domEvent.stopPropagation();
+            handleRemoveOrg(node.org.id);
+          }}>
+            删除机构
+          </Menu.Item>
+        )}
         <Menu.Item onClick={(e) => {
           e.domEvent.stopPropagation();
           setIsCreateOrg(true);
@@ -89,7 +87,7 @@ const TreeMenu: React.FC<TreeMenuProps> = props => {
           <OrgForm title="添加机构" visible={isCreateOrg} onCancel={() => setIsCreateOrg(false)}
             info={node.org} onSubmit={handleCreateOrg} />
           <UserForm title="添加用户" visible={isCreateUser} onCancel={() => setIsCreateUser(false)}
-            orgTree={orgTree} info={{ orgId: node.org.id }} onSubmit={handleCreateUser} />
+            orgTree={orgTree} info={{ orgId: node.org.id, roles: [] }} onSubmit={handleCreateUser} />
         </div>
       </span>
     </Dropdown>

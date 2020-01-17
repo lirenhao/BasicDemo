@@ -1,12 +1,11 @@
 import React from 'react';
 import { Dispatch } from 'redux';
 import { GridContent } from '@ant-design/pro-layout';
-import { Row, Col, Button, Menu, Empty } from 'antd';
+import { Row, Col, Button, Menu, Empty, Icon } from 'antd';
 import { connect } from 'dva';
-import { OrgTreeData, UserData } from './data';
+import { UserData } from './data';
 import { ModelState } from './model';
-import UserRole from './UserRole';
-import UserForm from './UserForm';
+import UserUpdate from './UserUpdate';
 
 import styles from './style.less';
 
@@ -14,18 +13,15 @@ const { Item } = Menu;
 
 interface UserProps {
   dispatch: Dispatch<any>;
-  orgTree: OrgTreeData[];
   orgId: string;
   users: UserData[];
   loading: boolean;
 }
 
 const User: React.FC<UserProps> = props => {
-  const { dispatch, orgTree, orgId, users } = props;
+  const { dispatch, orgId, users } = props;
 
-  const [userId, setUserId] = React.useState<string>("");
-  const [updateUserId, setUpdateUserId] = React.useState<string>("");
-  const [isUpdateUser, setIsUpdateUser] = React.useState<boolean>(false);
+  const [selectKey, setSelectKey] = React.useState<string>("");
 
   React.useEffect(() => {
     dispatch({
@@ -34,15 +30,8 @@ const User: React.FC<UserProps> = props => {
     });
   }, [orgId]);
 
-  const selectKey = (key: string) => {
-    setUserId(key);
-  }
-
-  const handleUpdateUser = (user: UserData) => {
-    dispatch({
-      type: 'org/fetchCreateOrUpdateUser',
-      payload: user,
-    });
+  const onSelectKey = (key: string) => {
+    setSelectKey(key);
   }
 
   const handleRemoveUser = (user: UserData) => {
@@ -58,27 +47,21 @@ const User: React.FC<UserProps> = props => {
         <div className={styles.leftMenu}>
           <Menu
             mode="inline"
-            selectedKeys={[userId]}
-            onClick={({ key }) => selectKey(key)}
+            selectedKeys={[selectKey]}
+            onClick={({ key }) => onSelectKey(key)}
           >
             {users.map(user => (
-              <Item key={user.id}>
+              <Item key={`${user.orgId}#${user.id}`}>
                 <Row>
-                  <Col span={16}>{user.id}</Col>
-                  <Col span={8}>
-                    <Button.Group>
-                      <Button icon="edit"
-                        onClick={e => {
-                          e.stopPropagation();
-                          setUpdateUserId(user.id);
-                          setIsUpdateUser(true);
-                        }} />
-                      <Button icon="delete"
-                        onClick={e => {
-                          e.stopPropagation();
-                          handleRemoveUser(user);
-                        }} />
-                    </Button.Group>
+                  <Col span={20}>{user.id}</Col>
+                  <Col span={4}>
+                    <Button shape="circle" size="small"
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleRemoveUser(user);
+                      }} >
+                      <Icon type="close" style={{ marginRight: 0 }} />
+                    </Button>
                   </Col>
                 </Row>
               </Item>
@@ -87,14 +70,12 @@ const User: React.FC<UserProps> = props => {
         </div>
         <div className={styles.right}>
           <div className={styles.title}>
-            {users.filter(user => user.id === userId).length > 0 ?
-              (<UserRole user={users.filter(user => user.id === userId)[0]} />) : (<Empty />)
+            {users.filter(user => `${orgId}#${user.id}` === selectKey).length > 0 ?
+              (<UserUpdate info={users.filter(user => `${orgId}#${user.id}` === selectKey)[0]} />) : (<Empty />)
             }
           </div>
         </div>
       </div>
-      <UserForm title="修改用户" visible={isUpdateUser} onCancel={() => setIsUpdateUser(false)}
-        orgTree={orgTree} info={users.filter(user => user.id === updateUserId)[0] || {}} onSubmit={handleUpdateUser} />
     </GridContent>
   ) : (<Empty />);
 }
@@ -107,7 +88,6 @@ export default connect(
     org: ModelState,
     loading: { models: { [key: string]: boolean } };
   }) => ({
-    orgTree: org.orgTree,
     users: org.users,
     loading: loading.models.org,
   }),

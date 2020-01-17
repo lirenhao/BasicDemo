@@ -1,15 +1,15 @@
 import React from 'react';
-import { Modal, Form, Input, TreeSelect } from 'antd';
+import { Dispatch } from 'redux';
+import { connect } from 'dva';
+import { Card, Form, Input, TreeSelect } from 'antd';
 import { FormComponentProps } from 'antd/es/form';
 import { TreeNode } from 'antd/es/tree-select';
 import { OrgTreeData, UserData } from './data';
-import { existUserId } from './service';
+import { ModelState } from './model';
+import RoleField from './RoleField';
 
-interface UserFormProps extends FormComponentProps {
-  title: string;
-  visible: boolean;
-  onCancel(): void;
-  onSubmit(value: UserData): void;
+interface UserUpdateProps extends FormComponentProps {
+  dispatch: Dispatch<any>;
   info: Partial<UserData>;
   orgTree: OrgTreeData[];
 }
@@ -17,20 +17,18 @@ interface UserFormProps extends FormComponentProps {
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
-    sm: { span: 7 },
+    sm: { span: 4 },
+    md: { span: 2 },
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 12 },
-    md: { span: 10 },
+    sm: { span: 20 },
+    md: { span: 20 },
   },
 };
 
-const UserForm: React.SFC<UserFormProps> = props => {
-  const {
-    title, visible, onCancel, onSubmit,
-    info, orgTree, form, form: { getFieldDecorator }
-  } = props;
+const UserForm: React.SFC<UserUpdateProps> = props => {
+  const { dispatch, info, orgTree, form, form: { getFieldDecorator } } = props;
 
   const makeTree = (orgTree: OrgTreeData[]): TreeNode[] => orgTree.map(orgTree => ({
     value: orgTree.org.id,
@@ -42,42 +40,30 @@ const UserForm: React.SFC<UserFormProps> = props => {
     e.preventDefault();
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        onSubmit({
-          ...info,
-          ...values,
+        dispatch({
+          type: 'org/fetchCreateOrUpdateUser',
+          payload: {
+            ...info,
+            ...values,
+          },
+          callback: () => {
+            if (info.orgId !== values.orgId)
+              dispatch({
+                type: 'org/fetchUserByOrgId',
+                payload: info.orgId,
+              });
+          }
         });
-        form.resetFields();
-        onCancel();
       }
     });
   }
 
   return (
-    <Modal
-      maskClosable={false}
-      title={title}
-      visible={visible}
-      onOk={handleSubmit}
-      onCancel={() => {
-        form.resetFields();
-        onCancel();
-      }}
-    >
+    < Card title="用户更新"
+      extra={< a href="#" onClick={handleSubmit} >保存</a>}>
       <Form onSubmit={handleSubmit}>
         <Form.Item {...formItemLayout} label="用户">
-          {getFieldDecorator('id', {
-            initialValue: info.id,
-            rules: [
-              {
-                required: true,
-                message: '请输入用户',
-              },
-              {
-                validator: (_, value) => (value === '' || value === info.id) ? Promise.resolve() :
-                  existUserId(value).then((result: boolean) => result ? Promise.reject('用户已存在') : Promise.resolve()),
-              },
-            ],
-          })(<Input placeholder="请输入" />)}
+          <Input value={info.id} readOnly />
         </Form.Item>
         <Form.Item {...formItemLayout} label="机构">
           {getFieldDecorator('orgId', {
@@ -100,9 +86,25 @@ const UserForm: React.SFC<UserFormProps> = props => {
             />
           )}
         </Form.Item>
+        <Form.Item {...formItemLayout} label="角色">
+          {getFieldDecorator('roles', {
+            initialValue: info.roles,
+          })(<RoleField />)}
+        </Form.Item>
       </Form>
-    </Modal >
+    </Card>
   );
 }
 
-export default Form.create<UserFormProps>()(UserForm);
+export default connect(
+  ({
+    org,
+    loading,
+  }: {
+    org: ModelState,
+    loading: { models: { [key: string]: boolean } };
+  }) => ({
+    orgTree: org.orgTree,
+    loading: loading.models.org,
+  }),
+)(Form.create<UserUpdateProps>()(UserForm));

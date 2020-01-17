@@ -49,7 +49,7 @@ const AppView: React.FC<AppProps> = props => {
           return (
             <AppRes app={apps.filter(app => app.id === appId)[0]} />
           )
-        } else {
+        } else if (apps.filter(app => app.id === appId)[0].roles.map(role => role.name).includes(roleId)) {
           return (
             <RoleRes app={apps.filter(app => app.id === appId)[0]} roleId={roleId} />
           )

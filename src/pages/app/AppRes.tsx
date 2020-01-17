@@ -42,7 +42,7 @@ const AppRes: React.FC<AppResProps> = props => {
 
   return (
     <Card title={`资源管理【${app.id}】`} extra={<a href="#" onClick={handleSubmit}>保存</a>}>
-      <Collapse defaultActiveKey={svcs.map(svc => `${app.id}#${svc.id}`)}>
+      <Collapse key={app.id} defaultActiveKey={svcs.map(svc => `${app.id}#${svc.id}`)}>
         {svcs.map(svc => (
           <Panel header={svc.id} key={`${app.id}#${svc.id}`}>
             {svc.resources?.map(res => (

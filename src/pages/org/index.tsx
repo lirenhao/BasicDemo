@@ -64,9 +64,8 @@ const OrgView: React.FC<OrgProps> = props => {
             </div>
             <div className={styles.right}>
               <div className={styles.title}>
-                用户
+                {renderRes()}
               </div>
-              {renderRes()}
             </div>
           </div>
         </GridContent>
