@@ -14,22 +14,22 @@ const { Item } = Menu;
 interface SvcProps {
   dispatch: Dispatch<any>;
   svcs: SvcData[];
+  svcId: string;
   loading: boolean;
 }
 
 const SvcView: React.FC<SvcProps> = props => {
-  const { dispatch, svcs, loading } = props;
-
-  const [id, setId] = React.useState<string>("");
-  const [info, setInfo] = React.useState<Partial<SvcData>>({});
+  const { dispatch, svcs, svcId, loading } = props;
 
   React.useEffect(() => {
     dispatch({ type: 'svc/fetchSvcs' });
   }, []);
 
   const selectKey = (key: string) => {
-    setId(key);
-    setInfo(svcs.filter(svc => svc.id === key)[0]);
+    dispatch({
+      type: 'svc/setSvcId',
+      payload: key,
+    });
   }
 
   return (
@@ -40,7 +40,7 @@ const SvcView: React.FC<SvcProps> = props => {
             <div className={styles.leftMenu}>
               <Menu
                 mode="inline"
-                selectedKeys={[id]}
+                selectedKeys={[svcId]}
                 onClick={({ key }) => selectKey(key)}
               >
                 {svcs.map(svc => <Item key={svc.id}>{svc.id}</Item>)}
@@ -48,11 +48,11 @@ const SvcView: React.FC<SvcProps> = props => {
             </div>
             <div className={styles.right}>
               <div className={styles.title}>
-                <Card title={id}>
+                <Card title={svcId}>
                   <List
                     loading={loading}
                     itemLayout="horizontal"
-                    dataSource={info.resources}
+                    dataSource={svcs.filter(svc => svc.id === svcId)[0]?.resources}
                     renderItem={(item: ResData) => (
                       <List.Item>
                         <List.Item.Meta title={item.uri} description={item.ops.join(' | ')} />
@@ -78,6 +78,7 @@ export default connect(
     loading: { models: { [key: string]: boolean } };
   }) => ({
     svcs: svc.svcs,
+    svcId: svc.svcId,
     loading: loading.models.svc,
   }),
 )(SvcView);
