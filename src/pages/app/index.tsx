@@ -3,7 +3,7 @@ import { Dispatch } from 'redux';
 import { PageHeaderWrapper, GridContent } from '@ant-design/pro-layout';
 import { Spin, Button, Icon, Tree, Card, Empty } from 'antd';
 import { connect } from 'dva';
-import { AppData } from './data.d';
+import { AppData, KeyData } from './data.d';
 import { ModelState } from './model';
 import TreeMenu from './TreeMeun';
 import AppRes from './AppRes';
@@ -17,13 +17,15 @@ const { TreeNode } = Tree;
 interface AppProps {
   dispatch: Dispatch<any>;
   apps: AppData[];
+  keys: KeyData[];
+  appId: string;
+  roleId: string;
   loading: boolean;
 }
 
 const AppView: React.FC<AppProps> = props => {
-  const { dispatch, apps, loading } = props;
+  const { dispatch, apps, appId, roleId, loading } = props;
 
-  const [selectedKeys, setSelectedKeys] = React.useState<string[]>([]);
   const [isCreateApp, setIsCreateApp] = React.useState<boolean>(false);
 
   React.useEffect(() => {
@@ -31,7 +33,16 @@ const AppView: React.FC<AppProps> = props => {
   }, []);
 
   const onTreeSelect = (selectedKeys: string[]) => {
-    setSelectedKeys(selectedKeys)
+    if (selectedKeys.length > 0) {
+      const ids = selectedKeys[0].split('#');
+      dispatch({
+        type: 'app/setId',
+        payload: {
+          appId: ids[0],
+          roleId: ids[1],
+        },
+      });
+    }
   }
 
   const handleCreateApp = (app: AppData) => {
@@ -42,18 +53,15 @@ const AppView: React.FC<AppProps> = props => {
   }
 
   const renderRes = () => {
-    if (selectedKeys.length > 0) {
-      const [appId, roleId] = selectedKeys[0].split('#');
-      if (apps.map(app => app.id).includes(appId)) {
-        if (!roleId) {
-          return (
-            <AppRes app={apps.filter(app => app.id === appId)[0]} />
-          )
-        } else if (apps.filter(app => app.id === appId)[0].roles.map(role => role.name).includes(roleId)) {
-          return (
-            <RoleRes app={apps.filter(app => app.id === appId)[0]} roleId={roleId} />
-          )
-        }
+    if (apps.map(app => app.id).includes(appId)) {
+      if (!roleId) {
+        return (
+          <AppRes app={apps.filter(app => app.id === appId)[0]} />
+        )
+      } else if (apps.filter(app => app.id === appId)[0].roles.map(role => role.name).includes(roleId)) {
+        return (
+          <RoleRes app={apps.filter(app => app.id === appId)[0]} />
+        )
       }
     }
     return (<Card><Empty /></Card>)
@@ -70,12 +78,12 @@ const AppView: React.FC<AppProps> = props => {
               </Button>
               <Tree
                 onSelect={onTreeSelect}
-                selectedKeys={selectedKeys}
+                selectedKeys={[`${appId}#${roleId}`]}
               >
                 {apps.map(app => (
                   <TreeNode
                     appId={app.id}
-                    key={app.id}
+                    key={`${app.id}#`}
                     title={<TreeMenu app={app} />}
                     children={app.roles?.map(role => (
                       <TreeNode isLeaf
@@ -109,6 +117,9 @@ export default connect(
     loading: { models: { [key: string]: boolean } };
   }) => ({
     apps: app.apps,
+    appId: app.appId,
+    roleId: app.roleId,
+    keys: app.keys,
     loading: loading.models.app,
   }),
 )(AppView);

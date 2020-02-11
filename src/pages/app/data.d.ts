@@ -22,3 +22,9 @@ export interface AppData {
   resources: SvcResData[];
   roles: RoleData[];
 }
+
+export interface KeyData {
+  appId: string;
+  roleId: string;
+  activeKey: string[];
+}

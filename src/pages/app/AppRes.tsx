@@ -2,7 +2,7 @@ import React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'dva';
 import { Card, Collapse } from 'antd';
-import { SvcData, AppData } from './data';
+import { SvcData, AppData, KeyData } from './data';
 import { ModelState } from './model';
 import { SvcResData } from './data';
 import ResOps from './ResOps';
@@ -13,12 +13,14 @@ interface AppResProps {
   dispatch: Dispatch<any>;
   app: AppData;
   svcs: SvcData[];
+  appId: string;
+  keys: KeyData[];
   loading: boolean;
 }
 
 const AppRes: React.FC<AppResProps> = props => {
 
-  const { dispatch, app, svcs } = props;
+  const { dispatch, app, appId, svcs, keys } = props;
 
   const [appRes, setAppRes] = React.useState<SvcResData[]>([]);
 
@@ -29,6 +31,21 @@ const AppRes: React.FC<AppResProps> = props => {
   React.useEffect(() => {
     setAppRes(app.resources);
   }, [app]);
+
+  React.useEffect(() => {
+
+  }, [svcs, keys]);
+
+  const handleChange = (activeKey: string | string[]) => {
+    dispatch({
+      type: 'app/setKeys',
+      payload: {
+        appId,
+        roleId: "",
+        activeKey,
+      },
+    });
+  }
 
   const handleSubmit = () => {
     dispatch({
@@ -42,7 +59,9 @@ const AppRes: React.FC<AppResProps> = props => {
 
   return (
     <Card title={`资源管理【${app.id}】`} extra={<a href="#" onClick={handleSubmit}>保存</a>}>
-      <Collapse key={app.id} defaultActiveKey={svcs.map(svc => `${app.id}#${svc.id}`)}>
+      <Collapse key={app.id} onChange={handleChange}
+        activeKey={keys.filter(key => (key.appId === appId && key.roleId === ""))[0]?.activeKey}
+      >
         {svcs.map(svc => (
           <Panel header={svc.id} key={`${app.id}#${svc.id}`}>
             {svc.resources?.map(res => (
@@ -64,6 +83,8 @@ export default connect(
     loading: { models: { [key: string]: boolean } };
   }) => ({
     svcs: app.svcs,
+    keys: app.keys,
+    appId: app.appId,
     loading: loading.models.app,
   }),
 )(AppRes);

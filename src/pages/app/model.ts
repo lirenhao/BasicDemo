@@ -1,11 +1,14 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
 import { getApps, getSvcs, createAndUpdataApp, deleteApp } from './service';
-import { AppData, SvcData } from './data';
+import { AppData, SvcData, KeyData } from './data';
 
 export interface ModelState {
   apps: AppData[];
   svcs: SvcData[];
+  appId: string;
+  roleId: string;
+  keys: KeyData[];
 }
 
 export interface ModelType {
@@ -20,12 +23,17 @@ export interface ModelType {
   reducers: {
     setApps: Reducer<ModelState>;
     setSvcs: Reducer<ModelState>;
+    setId: Reducer<ModelState>;
+    setKeys: Reducer<ModelState>;
   };
 }
 
 const defaulState: ModelState = {
   apps: [],
   svcs: [],
+  appId: "",
+  roleId: "",
+  keys: [],
 }
 
 const Model: ModelType = {
@@ -74,6 +82,21 @@ const Model: ModelType = {
       return {
         ...state,
         svcs: payload,
+      };
+    },
+    setId(state = defaulState, { payload }) {
+      const { appId, roleId } = payload;
+      return {
+        ...state,
+        appId,
+        roleId,
+      };
+    },
+    setKeys(state = defaulState, { payload }) {
+      const { appId, roleId } = payload;
+      return {
+        ...state,
+        keys: [...state.keys.filter(key => !(key.appId === appId && key.roleId === roleId)), payload],
       };
     },
   }
