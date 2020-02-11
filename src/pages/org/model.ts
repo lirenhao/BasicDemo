@@ -1,12 +1,13 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
+import { OrgTreeData, UserData, AppData, KeyData } from './data';
 import { getOrgTree, getUserByOrgId, getApps, createAndUpdataOrg, deleteOrg, createAndUpdataUser, deleteUser } from './service';
-import { OrgTreeData, UserData, AppData } from './data';
 
 export interface ModelState {
   orgTree: OrgTreeData[];
   users: UserData[];
   apps: AppData[];
+  keys: KeyData[];
   orgId: string;
 }
 
@@ -26,6 +27,7 @@ export interface ModelType {
     setOrgTree: Reducer<ModelState>;
     setUsers: Reducer<ModelState>;
     setApps: Reducer<ModelState>;
+    setKeys: Reducer<ModelState>;
     setOrgId: Reducer<ModelState>;
   };
 }
@@ -34,6 +36,7 @@ const defaulState: ModelState = {
   orgTree: [],
   users: [],
   apps: [],
+  keys: [],
   orgId: "",
 }
 
@@ -111,6 +114,16 @@ const Model: ModelType = {
       return {
         ...state,
         apps: payload,
+      };
+    },
+    setKeys(state = defaulState, { payload }) {
+      const { orgId, userId } = payload;
+      return {
+        ...state,
+        keys: [
+          ...state.keys.filter(key => key.orgId !== orgId),
+          { orgId, userId }
+        ],
       };
     },
     setOrgId(state = defaulState, { payload }) {

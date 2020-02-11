@@ -28,3 +28,8 @@ export interface AppData {
   id: string;
   roles: RoleData[];
 }
+
+export interface KeyData {
+  orgId: string;
+  userId: string;
+}

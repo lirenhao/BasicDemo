@@ -3,7 +3,7 @@ import { Dispatch } from 'redux';
 import { GridContent } from '@ant-design/pro-layout';
 import { Row, Col, Button, Menu, Empty, Icon } from 'antd';
 import { connect } from 'dva';
-import { UserData } from './data';
+import { UserData, KeyData } from './data';
 import { ModelState } from './model';
 import UserUpdate from './UserUpdate';
 
@@ -15,13 +15,12 @@ interface UserProps {
   dispatch: Dispatch<any>;
   orgId: string;
   users: UserData[];
+  keys: KeyData[];
   loading: boolean;
 }
 
 const User: React.FC<UserProps> = props => {
-  const { dispatch, orgId, users } = props;
-
-  const [selectKey, setSelectKey] = React.useState<string>("");
+  const { dispatch, orgId, keys, users } = props;
 
   React.useEffect(() => {
     dispatch({
@@ -31,7 +30,13 @@ const User: React.FC<UserProps> = props => {
   }, [orgId]);
 
   const onSelectKey = (key: string) => {
-    setSelectKey(key);
+    dispatch({
+      type: 'org/setKeys',
+      payload: {
+        orgId,
+        userId: key,
+      },
+    });
   }
 
   const handleRemoveUser = (user: UserData) => {
@@ -41,17 +46,18 @@ const User: React.FC<UserProps> = props => {
     });
   }
 
+  const userId = keys.filter(key => key.orgId === orgId)[0]?.userId;
+
   return users.length > 0 ? (
     <GridContent>
       <div className={styles.main} >
         <div className={styles.leftMenu}>
-          <Menu
-            mode="inline"
-            selectedKeys={[selectKey]}
+          <Menu mode="inline"
+            selectedKeys={[userId]}
             onClick={({ key }) => onSelectKey(key)}
           >
             {users.map(user => (
-              <Item key={`${user.orgId}#${user.id}`}>
+              <Item key={user.id}>
                 <Row>
                   <Col span={20}>{user.id}</Col>
                   <Col span={4}>
@@ -70,8 +76,8 @@ const User: React.FC<UserProps> = props => {
         </div>
         <div className={styles.right}>
           <div className={styles.title}>
-            {users.filter(user => `${orgId}#${user.id}` === selectKey).length > 0 ?
-              (<UserUpdate info={users.filter(user => `${orgId}#${user.id}` === selectKey)[0]} />) : (<Empty />)
+            {users.filter(user => (user.id === userId && user.orgId === orgId)).length > 0 ?
+              (<UserUpdate info={users.filter(user => (user.id === userId && user.orgId === orgId))[0]} />) : (<Empty />)
             }
           </div>
         </div>
@@ -90,6 +96,7 @@ export default connect(
   }) => ({
     users: org.users,
     orgId: org.orgId,
+    keys: org.keys,
     loading: loading.models.org,
   }),
 )(User);
