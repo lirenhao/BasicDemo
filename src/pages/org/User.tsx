@@ -89,6 +89,7 @@ export default connect(
     loading: { models: { [key: string]: boolean } };
   }) => ({
     users: org.users,
+    orgId: org.orgId,
     loading: loading.models.org,
   }),
 )(User);

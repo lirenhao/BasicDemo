@@ -13,20 +13,22 @@ import styles from './style.less';
 interface OrgProps {
   dispatch: Dispatch<any>;
   orgTree: OrgTreeData[];
+  orgId: string;
   loading: boolean;
 }
 
 const OrgView: React.FC<OrgProps> = props => {
-  const { orgTree, loading } = props;
-
-  const [selectedKeys, setSelectedKeys] = React.useState<string[]>([]);
+  const { dispatch, orgTree, orgId, loading } = props;
 
   React.useEffect(() => {
-    props.dispatch({ type: 'org/fetchOrgTree' });
+    dispatch({ type: 'org/fetchOrgTree' });
   }, []);
 
   const onTreeSelect = (selectedKeys: string[]) => {
-    setSelectedKeys(selectedKeys)
+    dispatch({
+      type: 'org/setOrgId',
+      payload: selectedKeys[0],
+    });
   }
 
   const loopTreeNode = (data: OrgTreeData[]) => data.map((item) => {
@@ -40,15 +42,6 @@ const OrgView: React.FC<OrgProps> = props => {
     return <Tree.TreeNode key={item.org.id} title={<OrgMenu node={item} />} info={item.org} />;
   })
 
-  const renderRes = () => {
-    if (selectedKeys.length > 0) {
-      const orgId = selectedKeys[0];
-      return (<User orgId={orgId} />)
-    } else {
-      return (<Empty />)
-    }
-  }
-
   return (
     <PageHeaderWrapper>
       <Spin spinning={loading}>
@@ -57,14 +50,14 @@ const OrgView: React.FC<OrgProps> = props => {
             <div className={styles.leftMenu}>
               <Tree
                 onSelect={onTreeSelect}
-                selectedKeys={selectedKeys}
+                selectedKeys={[orgId]}
               >
                 {loopTreeNode(orgTree)}
               </Tree>
             </div>
             <div className={styles.right}>
               <div className={styles.title}>
-                {renderRes()}
+                <User />
               </div>
             </div>
           </div>
@@ -83,6 +76,7 @@ export default connect(
     loading: { models: { [key: string]: boolean } };
   }) => ({
     orgTree: org.orgTree,
+    orgId: org.orgId,
     loading: loading.models.org,
   }),
 )(OrgView);

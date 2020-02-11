@@ -7,6 +7,7 @@ export interface ModelState {
   orgTree: OrgTreeData[];
   users: UserData[];
   apps: AppData[];
+  orgId: string;
 }
 
 export interface ModelType {
@@ -25,6 +26,7 @@ export interface ModelType {
     setOrgTree: Reducer<ModelState>;
     setUsers: Reducer<ModelState>;
     setApps: Reducer<ModelState>;
+    setOrgId: Reducer<ModelState>;
   };
 }
 
@@ -32,6 +34,7 @@ const defaulState: ModelState = {
   orgTree: [],
   users: [],
   apps: [],
+  orgId: "",
 }
 
 const Model: ModelType = {
@@ -108,6 +111,12 @@ const Model: ModelType = {
       return {
         ...state,
         apps: payload,
+      };
+    },
+    setOrgId(state = defaulState, { payload }) {
+      return {
+        ...state,
+        orgId: payload,
       };
     },
   },
