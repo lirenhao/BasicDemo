@@ -1,7 +1,7 @@
 import React from 'react';
 import { Dispatch } from 'redux';
 import { PageHeaderWrapper, GridContent } from '@ant-design/pro-layout';
-import { Spin, Tree, Empty } from 'antd';
+import { Spin, Tree } from 'antd';
 import { connect } from 'dva';
 import { OrgTreeData } from './data.d';
 import { ModelState } from './model';
