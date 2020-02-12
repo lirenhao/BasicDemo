@@ -49,6 +49,7 @@ const OrgView: React.FC<OrgProps> = props => {
           <div className={styles.main} >
             <div className={styles.leftMenu}>
               <Tree
+                defaultExpandedKeys={[orgId]}
                 onSelect={onTreeSelect}
                 selectedKeys={[orgId]}
               >

@@ -59,11 +59,19 @@ const OrgForm: React.SFC<OrgFormProps> = props => {
             rules: [
               {
                 required: true,
+                whitespace: true,
                 message: '请输入机构ID',
               },
               {
-                validator: (_, value) => value === info.id ? Promise.resolve() : existOrgId(value)
-                  .then((result: boolean) => result ? Promise.reject('机构ID已存在') : Promise.resolve()),
+                validator: async (_, value) => {
+                  if (value === "")
+                    return Promise.resolve();
+                  if (value === info.id)
+                    return Promise.resolve();
+                  if (value.includes(" "))
+                    return Promise.reject('机构ID不能包含空格');
+                  return existOrgId(value).then((result: boolean) => result ? Promise.reject('机构ID已存在') : Promise.resolve())
+                },
               },
             ],
           })(<Input placeholder="请输入" />)}
