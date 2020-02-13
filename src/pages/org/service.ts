@@ -2,11 +2,11 @@ import request from '@/utils/request';
 import { OrgData, UserData } from './data';
 
 export async function getOrgTree(idPrefix: string = '') {
-  return request(`/api/permit/org?id_prefix=${idPrefix}`);
+  return request(`/api/permit/org?id_prefix=${encodeURIComponent(idPrefix)}`);
 }
 
 export async function getUserByOrgId(orgId: string) {
-  return request(`/api/permit/user?org_id=${orgId}`);
+  return request(`/api/permit/user?org_id=${encodeURIComponent(orgId)}`);
 }
 
 export async function getApps() {
