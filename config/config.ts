@@ -112,19 +112,19 @@ export default {
               authority: ['admin'],
             },
             {
-              name: '服务',
+              name: 'svc',
               icon: 'smile',
               path: '/svc',
               component: './svc',
             },
             {
-              name: '应用',
+              name: 'app',
               icon: 'smile',
               path: '/app',
               component: './app',
             },
             {
-              name: '机构',
+              name: 'org',
               icon: 'smile',
               path: '/org',
               component: './org',
@@ -195,6 +195,14 @@ export default {
       target: 'http://localhost:8080/',
       changeOrigin: true,
       pathRewrite: { '^/api/permit': '/admin/apis' },
+      onProxyRes(proxyRes: any) {
+        const key = 'set-cookie';
+        if (proxyRes.headers[key]) {
+          const cookies = proxyRes.headers[key].join('').split(' ');
+          proxyRes.headers[key] = [cookies[0], 'Path=/'].join(' ');
+          console.log(proxyRes.headers[key]);
+        }
+      },
     },
     '/api/login': {
       target: 'http://localhost:8080/',
