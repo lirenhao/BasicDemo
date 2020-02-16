@@ -9,7 +9,7 @@ import { getPageQuery } from '@/utils/utils';
 
 export interface StateType {
   status?: 'ok' | 'error';
-  type?: string;
+  token?: string;
   currentAuthority?: 'user' | 'guest' | 'admin';
 }
 
@@ -41,7 +41,7 @@ const Model: LoginModelType = {
         payload: response,
       });
       // Login successfully
-      if (response.status === 'ok') {
+      if (response) {
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         let { redirect } = params as { redirect: string };
@@ -84,8 +84,7 @@ const Model: LoginModelType = {
       setAuthority(payload.currentAuthority);
       return {
         ...state,
-        status: payload.status,
-        type: payload.type,
+        token: payload,
       };
     },
   },
