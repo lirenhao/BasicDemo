@@ -72,6 +72,9 @@ export default {
   targets: {
     ie: 11,
   },
+  history: 'hash',
+  base: '/admin/',
+  publicPath: '/admin/',
   // umi routes: https://umijs.org/zh/guide/router.html
   routes: [
     {
@@ -191,30 +194,26 @@ export default {
     basePath: '/',
   }, // chainWebpack: webpackPlugin,
   proxy: {
-    '/api/permit': {
+    '/admin/apis': {
       target: 'http://localhost:8080/',
       changeOrigin: true,
-      pathRewrite: { '^/api/permit': '/admin/apis' },
       onProxyRes(proxyRes: any) {
         const key = 'set-cookie';
         if (proxyRes.headers[key]) {
           const cookies = proxyRes.headers[key].join('').split(' ');
           proxyRes.headers[key] = [cookies[0], 'Path=/'].join(' ');
-          console.log(proxyRes.headers[key]);
         }
       },
     },
-    '/api/admin': {
+    '/admin': {
       target: 'http://localhost:8080/',
       changeOrigin: true,
-      pathRewrite: { '^/api/admin': '/admin' },
       logLevel: 'debug',
       onProxyRes(proxyRes: any) {
         const key = 'set-cookie';
         if (proxyRes.headers[key]) {
           const cookies = proxyRes.headers[key].join('').split(' ');
           proxyRes.headers[key] = [cookies[0], 'Path=/'].join(' ');
-          console.log(proxyRes.headers[key]);
         }
       },
     },

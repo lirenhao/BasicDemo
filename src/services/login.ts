@@ -6,14 +6,14 @@ export interface LoginParamsType {
 }
 
 export async function fakeAccountLogin(params: LoginParamsType) {
-  return request('/api/admin/login', {
+  return request('/admin/login', {
     method: 'POST',
     data: params,
   });
 }
 
 export async function fakeAccountLogout() {
-  return request('/api/admin/logout', {
+  return request('/admin/logout', {
     method: 'POST',
   });
 }

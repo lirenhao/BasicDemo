@@ -73,7 +73,7 @@ const data: SvcData[] = [
 ]
 
 export default {
-  'GET /api/permit/svc': (_: Request, resp: Response) => {
+  'GET /admin/apis/svc': (_: Request, resp: Response) => {
     resp.send(data);
   },
 }

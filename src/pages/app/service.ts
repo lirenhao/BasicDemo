@@ -2,15 +2,15 @@ import request from '@/utils/request';
 import { AppData } from './data';
 
 export async function getApps() {
-  return request('/api/permit/app');
+  return request('/admin/apis/app');
 }
 
 export async function getSvcs() {
-  return request('/api/permit/svc');
+  return request('/admin/apis/svc');
 }
 
 export async function existAppId(appId: string) {
-  return request(`/api/permit/app/${encodeURIComponent(appId)}/exist`);
+  return request(`/admin/apis/app/${encodeURIComponent(appId)}/exist`);
 }
 
 export async function createAndUpdataApp(app: AppData) {
@@ -43,13 +43,13 @@ export async function createAndUpdataApp(app: AppData) {
       })),
     })),
   }
-  return request('/api/permit/app', {
+  return request('/admin/apis/app', {
     method: 'PUT', data,
   });
 }
 
 export async function deleteApp(appId: string) {
-  return request(`/api/permit/app/${encodeURIComponent(appId)}`, {
+  return request(`/admin/apis/app/${encodeURIComponent(appId)}`, {
     method: 'DELETE',
   });
 }
