@@ -204,10 +204,10 @@ export default {
         }
       },
     },
-    '/api/login': {
+    '/api/admin': {
       target: 'http://localhost:8080/',
       changeOrigin: true,
-      pathRewrite: { '^/api/login': '/admin/login' },
+      pathRewrite: { '^/api/admin': '/admin' },
       logLevel: 'debug',
       onProxyRes(proxyRes: any) {
         const key = 'set-cookie';

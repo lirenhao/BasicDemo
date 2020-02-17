@@ -39,7 +39,9 @@ const UserModel: UserModelType = {
   namespace: 'user',
 
   state: {
-    currentUser: {},
+    currentUser: {
+      name: "admin",
+    },
   },
 
   effects: {

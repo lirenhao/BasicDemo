@@ -4,12 +4,10 @@ import { PageLoading } from '@ant-design/pro-layout';
 import { Redirect } from 'umi';
 import { stringify } from 'querystring';
 import { ConnectState, ConnectProps } from '@/models/connect';
-import { CurrentUser } from '@/models/user';
 import { getCookie } from '@/utils/utils'
 
 interface SecurityLayoutProps extends ConnectProps {
   loading?: boolean;
-  currentUser?: CurrentUser;
 }
 
 interface SecurityLayoutState {
@@ -25,12 +23,12 @@ class SecurityLayout extends React.Component<SecurityLayoutProps, SecurityLayout
     this.setState({
       isReady: true,
     });
-    const { dispatch } = this.props;
-    if (dispatch) {
-      dispatch({
-        type: 'user/fetchCurrent',
-      });
-    }
+    // const { dispatch } = this.props;
+    // if (dispatch) {
+    //   dispatch({
+    //     type: 'user/fetchCurrent',
+    //   });
+    // }
   }
 
   render() {
@@ -53,7 +51,6 @@ class SecurityLayout extends React.Component<SecurityLayoutProps, SecurityLayout
   }
 }
 
-export default connect(({ login, user, loading }: ConnectState) => ({
-  currentUser: user.currentUser,
+export default connect(({ loading }: ConnectState) => ({
   loading: loading.models.user,
 }))(SecurityLayout);
